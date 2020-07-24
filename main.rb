@@ -51,9 +51,10 @@ class ObjectSimilarity
   def count_diff_of(struct_1, struct_2)
     shorter, longer = struct_1.keys.length < struct_2.keys.length ? [struct_1, struct_2] : [struct_2, struct_1]
 
-    temp_object = shorter.each_with_object({}) do |(key, count), obj|
+    diff_helper_struct = shorter.each_with_object({}) do |(key, count), obj|
       if longer.key?(key)
         diff = count - longer[key]
+        diff = diff > 0 ? diff : -1 * diff
         obj[key] = diff
       else
         obj[key] = count
@@ -61,9 +62,7 @@ class ObjectSimilarity
     end
 
     longer
-      .merge(temp_object)
-      .filter { |word, count| count != 0 }
-      .each_with_object({}) { |(word, count), obj| obj[word] = count > 0 ? count : count * -1}
+      .merge(diff_helper_struct)
       .reduce(0) { |sum, (word, count)| sum += word.length * count }
   end
 
