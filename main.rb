@@ -1,4 +1,3 @@
-
 class ObjectSimilarity
   CAPTURE_WORDS_REGEX = /\"(.*?)\"/x
 
@@ -51,15 +50,16 @@ class ObjectSimilarity
   def count_diff_of(struct_1, struct_2)
     shorter, longer = struct_1.keys.length < struct_2.keys.length ? [struct_1, struct_2] : [struct_2, struct_1]
 
-    diff_helper_struct = shorter.each_with_object({}) do |(key, count), obj|
-      if longer.key?(key)
-        diff = count - longer[key]
-        diff = diff > 0 ? diff : -1 * diff
-        obj[key] = diff
-      else
-        obj[key] = count
+    diff_helper_struct = shorter
+      .each_with_object({}) do |(key, count), obj|
+        if longer.key?(key)
+          diff = count - longer[key]
+          diff = diff > 0 ? diff : -1 * diff
+          obj[key] = diff
+        else
+          obj[key] = count
+        end
       end
-    end
 
     longer
       .merge(diff_helper_struct)
